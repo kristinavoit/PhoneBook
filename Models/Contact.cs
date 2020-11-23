@@ -11,5 +11,7 @@ namespace PhonesBook.Models
         public int contactID { get; set; }
         public string contactName { get; set; }
         public string phoneNumber { get; set; }
+        public string countryName { get; set; }
+
     }
 }

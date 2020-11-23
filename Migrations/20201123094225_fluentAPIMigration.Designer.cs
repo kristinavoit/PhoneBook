@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhonesBook.Models;
 
 namespace PhonesBook.Migrations
 {
-    [DbContext(typeof(PhonesBookDbContext))]
-    partial class PhonesBookDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(RepositoryContext))]
+    [Migration("20201123094225_fluentAPIMigration")]
+    partial class fluentAPIMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +31,10 @@ namespace PhonesBook.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("contactName");
 
+                    b.Property<string>("countryName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("countryName");
+
                     b.Property<string>("phoneNumber")
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("phoneNumber");
@@ -45,13 +51,17 @@ namespace PhonesBook.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("firstName")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("firstName");
+
                     b.Property<bool>("isAdmin")
                         .HasColumnType("bit")
                         .HasColumnName("isAdmin");
 
-                    b.Property<string>("userName")
+                    b.Property<string>("secondName")
                         .HasColumnType("nvarchar(max)")
-                        .HasColumnName("userName");
+                        .HasColumnName("secondName");
 
                     b.HasKey("userID");
 
