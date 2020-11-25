@@ -9,6 +9,8 @@ namespace PhonesBook.ApiModels
     {
         public string Key { get; set; }
         public string Name { get; set; }
+        public string Login { get; set; }
+        public string PhoneNumber { get; set; }
         public bool IsAdded { get; set; }
     }
 }

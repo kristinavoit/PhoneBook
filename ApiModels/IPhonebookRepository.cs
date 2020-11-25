@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace PhonesBook.ApiModels
 {
-    public interface IPhonebookRepository
+    public interface IRepository
     {
         IEnumerable<PhonebookItem> GetAll();
         IEnumerable<PhonebookItem> GetById(int id);
-        void Create(string key);
+        void Add(PhonebookItem item);
         void Update(PhonebookItem item);
-        void Save();
+        void Save(PhonebookItem item);
         void Delete(string key);
     }
 }
