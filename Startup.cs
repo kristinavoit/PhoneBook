@@ -27,6 +27,7 @@ namespace PhonesBook
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IRepository, phonebookItem>();
+            services.AddMvc();
             services.AddControllers();
         }
 

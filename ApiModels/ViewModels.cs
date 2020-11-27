@@ -20,9 +20,14 @@ namespace PhonesBook.ApiModels
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public bool CheckNull { get; set; }
     }
     public class DeleteContactViewModel
     {
         public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public bool CheckNull { get; set; }
     }
 }

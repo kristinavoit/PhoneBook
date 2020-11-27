@@ -35,8 +35,7 @@ namespace PhonesBook.Controllers
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                     .ForMember("Login", opt => opt.MapFrom(c => c.Email))
                     .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
-                    .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull))
-                    .IgnoreAllPropertiesWithAnInaccessibleSetter ());
+                    .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
@@ -49,6 +48,52 @@ namespace PhonesBook.Controllers
             return View(model);
         }
 
+        [HttpPut("{key}")]
+        public ActionResult Edit(string key, [FromBody]EditContactViewModel model)
+        {
+            if (key == null )
+            {
+                return NotFound();
+            }
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactViewModel, PhonebookItem>()
+                    .ForMember("Key", opt => opt.MapFrom(c => c.Id))
+                    .ForMember("Name", opt => opt.MapFrom(c => c.Name))
+                    .ForMember("Login", opt => opt.MapFrom(c => c.Email))
+                    .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
+                    .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
+                config.AssertConfigurationIsValid();// to check automapper
+                var mapper = new Mapper(config);
 
+                PhonebookItem item = mapper.Map<EditContactViewModel, PhonebookItem>(model);
+            var pbitem = PhonebookItem.Find(key);
+            if (pbitem == null)
+            {
+                return NotFound();
+            }
+                repo.Update(item);
+                repo.Save(item);
+                return RedirectToAction("GetAll");
+        }
+
+        [HttpDelete("{key}")]
+        public ActionResult Delete(string key, [FromBody]DeleteContactViewModel model)
+        {
+            if (key == null)
+            {
+              return NotFound();
+            }
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteContactViewModel, PhonebookItem>()
+                .ForMember("Key", opt => opt.MapFrom(c => c.Id))
+                .ForMember("Name", opt => opt.MapFrom(c => c.Name))
+                .ForMember("Login", opt => opt.MapFrom(c => c.Email))
+                .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
+                .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
+            config.AssertConfigurationIsValid();// to check automapper
+                var mapper = new Mapper(config);
+
+                PhonebookItem item = mapper.Map<DeleteContactViewModel, PhonebookItem>(model);
+                repo.Delete(key);
+                return RedirectToAction("GetAll");
+        }
     }
 }

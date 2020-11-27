@@ -12,6 +12,7 @@ namespace PhonesBook.ApiModels
         void Add(PhonebookItem item);
         void Update(PhonebookItem item);
         void Save(PhonebookItem item);
-        void Delete(string key);
+        PhonebookItem Delete(string key);
+        object Find(string key);
     }
 }

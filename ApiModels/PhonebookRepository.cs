@@ -30,14 +30,23 @@ namespace PhonesBook.ApiModels
             _phonebooks[item.Key] = item;
         }
 
-        public void Delete(string key)
+        public PhonebookItem Delete(string key)
         {
-            throw new NotImplementedException();
+            PhonebookItem item;
+            _phonebooks.TryRemove(key, out item);
+            return item; 
         }
         public void Add(PhonebookItem item)
         {
             item.Key = Guid.NewGuid().ToString();
             _phonebooks[item.Key] = item;
+        }
+
+        public object Find(string key)
+        {
+            PhonebookItem item;
+            _phonebooks.TryGetValue(key, out item);
+            return item;
         }
     }
 }
