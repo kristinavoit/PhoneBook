@@ -33,45 +33,41 @@ namespace PhonesBook.Controllers
                 var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactViewModel, PhonebookItem>()
                     .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
-                    .ForMember("Login", opt => opt.MapFrom(c => c.Email))
+                    .ForMember("Login", opt => opt.Ignore())
                     .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
                     .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
                 PhonebookItem item = mapper.Map<AddContactViewModel, PhonebookItem>(model);
-                repo.Add(item);
-                repo.Save(item);
-                return RedirectToAction("GetAll");
+                PhonebookItem.Add(item);
+                return CreatedAtAction("GetAll", new { id = item.Key }, item);
+                //repo.Save(item);
+                //return RedirectToAction("GetAll");
 
             }
             return View(model);
         }
 
         [HttpPut("{key}")]
-        public ActionResult Edit(string key, [FromBody]EditContactViewModel model)
+        public ActionResult Edit(string key, [FromBody] EditContactViewModel model)
         {
-            if (key == null )
-            {
-                return NotFound();
-            }
                 var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactViewModel, PhonebookItem>()
                     .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
-                    .ForMember("Login", opt => opt.MapFrom(c => c.Email))
-                    .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
-                    .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
+                    .ForMember("Login", opt => opt.Ignore())
+                    .ForMember("PhoneNumber", opt => opt.Ignore())
+                    .ForMember("IsAdded", opt => opt.Ignore()));
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
                 PhonebookItem item = mapper.Map<EditContactViewModel, PhonebookItem>(model);
-            var pbitem = PhonebookItem.Find(key);
-            if (pbitem == null)
-            {
-                return NotFound();
-            }
-                repo.Update(item);
-                repo.Save(item);
+                var pbitem = PhonebookItem.Find(key);
+                if (pbitem == null)
+                {
+                    return NotFound();
+                }
+                PhonebookItem.Update(item);
                 return RedirectToAction("GetAll");
         }
 

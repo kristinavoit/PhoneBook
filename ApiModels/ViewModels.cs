@@ -7,7 +7,7 @@ namespace PhonesBook.ApiModels
 {
     public class AddContactViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
@@ -16,7 +16,7 @@ namespace PhonesBook.ApiModels
     }
     public class EditContactViewModel
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
