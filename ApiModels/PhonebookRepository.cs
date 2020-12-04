@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PhonesBook.ApiModels
 {
-    public class phonebookItem: IRepository
+    public class PhonebookItem: IRepository
     {
         private static ConcurrentDictionary<string, PhonebookItem> _phonebooks =
               new ConcurrentDictionary<string, PhonebookItem>();

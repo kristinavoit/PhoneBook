@@ -27,7 +27,7 @@ namespace PhonesBook.Controllers
         [HttpGet]
         public IActionResult Login(string username, string pass)
         {
-            UserModel login = new UserModel();
+            UserDTO login = new UserDTO();
             login.UserName = username;
             login.Password = pass;
             IActionResult response = Unauthorized();
@@ -40,17 +40,17 @@ namespace PhonesBook.Controllers
             }
             return response;
         }
-        private UserModel AuthenticateUser(UserModel login)
+        private UserDTO AuthenticateUser(UserDTO login)
         {
-            UserModel user = null;
+            UserDTO user = null;
             //static user info
             if(login.UserName =="ashproghelp" && login.Password == "123")
             {
-                user = new UserModel { UserName = "AshProgHelp", EmailAdress = "ashproghelp@gmail.com", Password = "123" };
+                user = new UserDTO { UserName = "AshProgHelp", EmailAdress = "ashproghelp@gmail.com", Password = "123" };
             }
             return user;
         }
-        private string GenerateJSONWebToken (UserModel userinfo)
+        private string GenerateJSONWebToken (UserDTO userinfo)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

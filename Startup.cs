@@ -32,7 +32,7 @@ namespace PhonesBook
             services.AddCors(options=> {
                 options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             });
-            services.AddSingleton<IRepository, phonebookItem>();
+            services.AddSingleton<IRepository, PhonebookItem>();
             services.AddMvc();
             services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -11,13 +11,14 @@ using AutoMapper;
 namespace PhonesBook.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class PhonebookController : Controller
     {
         IRepository repo;
         public PhonebookController(IRepository phonebookItem)
         {
             PhonebookItem = phonebookItem;
-            repo = new phonebookItem();
+            repo = new PhonebookItem();
         }
         public IRepository PhonebookItem { get; set; }
 
@@ -27,10 +28,10 @@ namespace PhonesBook.Controllers
         }
 
         [HttpPost]
-        public ActionResult Add([FromBody]AddContactViewModel model)
+        public ActionResult Add([FromBody]AddContactDTO model)
         {
             if (ModelState.IsValid){
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactViewModel, PhonebookItem>()
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactDTO, PhonebookItem>()
                     .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                     .ForMember("Login", opt => opt.Ignore())
@@ -39,7 +40,7 @@ namespace PhonesBook.Controllers
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
-                PhonebookItem item = mapper.Map<AddContactViewModel, PhonebookItem>(model);
+                PhonebookItem item = mapper.Map<AddContactDTO, PhonebookItem>(model);
                 repo.Add(item);
                 repo.Save(item);
                 return RedirectToAction("GetAll");
@@ -49,13 +50,13 @@ namespace PhonesBook.Controllers
         }
 
         [HttpPut("{key}")]
-        public ActionResult Edit(string key, [FromBody]EditContactViewModel model)
+        public ActionResult Edit(string key, [FromBody]EditContactDTO model)
         {
             if (key == null )
             {
                 return NotFound();
             }
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactViewModel, PhonebookItem>()
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactDTO, PhonebookItem>()
                     .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                     .ForMember("Login", opt => opt.MapFrom(c => c.Email))
@@ -64,7 +65,7 @@ namespace PhonesBook.Controllers
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
-                PhonebookItem item = mapper.Map<EditContactViewModel, PhonebookItem>(model);
+                PhonebookItem item = mapper.Map<EditContactDTO, PhonebookItem>(model);
             var pbitem = PhonebookItem.Find(key);
             if (pbitem == null)
             {
@@ -76,13 +77,13 @@ namespace PhonesBook.Controllers
         }
 
         [HttpDelete("{key}")]
-        public ActionResult Delete(string key, [FromBody]DeleteContactViewModel model)
+        public ActionResult Delete(string key, [FromBody]DeleteContactDTO model)
         {
             if (key == null)
             {
               return NotFound();
             }
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteContactViewModel, PhonebookItem>()
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteContactDTO, PhonebookItem>()
                 .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                 .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                 .ForMember("Login", opt => opt.MapFrom(c => c.Email))
@@ -91,7 +92,7 @@ namespace PhonesBook.Controllers
             config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
-                PhonebookItem item = mapper.Map<DeleteContactViewModel, PhonebookItem>(model);
+                PhonebookItem item = mapper.Map<DeleteContactDTO, PhonebookItem>(model);
                 repo.Delete(key);
                 return RedirectToAction("GetAll");
         }
