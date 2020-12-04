@@ -18,7 +18,6 @@ namespace PhonesBook.Models
         public RepositoryContext(DbContextOptions<RepositoryContext> options) 
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         //public readonly IConfiguration Configuration;
@@ -36,53 +35,36 @@ namespace PhonesBook.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .HasKey(u => u.userID);
+                .HasKey(u => u.UserId);
 
             modelBuilder.Entity<User>()
-                .Property(u => u.firstName)
+                .Property(u => u.FirstName)
                 .HasColumnName("firstName");
 
             modelBuilder.Entity<User>()
-                .Property(u => u.secondName)
+                .Property(u => u.SecondName)
                 .HasColumnName("secondName");
 
             modelBuilder.Entity<User>()
-                .Property(u => u.isAdmin)
+                .Property(u => u.IsAdmin)
                 .HasColumnName("isAdmin");
 
             modelBuilder.Entity<Contact>()
-                .HasKey(u => u.contactID);
+                .HasKey(u => u.ContactId);
 
             modelBuilder.Entity<Contact>()
-                .Property(u => u.contactName)
+                .Property(u => u.ContactName)
                 .HasColumnName("contactName");
 
             modelBuilder.Entity<Contact>()
-                .Property(u => u.phoneNumber)
+                .Property(u => u.PhoneNumber)
                 .HasColumnName("phoneNumber");
 
             modelBuilder.Entity<Contact>()
-                .Property(u => u.countryName)
+                .Property(u => u.CountryName)
                 .HasColumnName("countryName");
 
             base.OnModelCreating(modelBuilder);
         }
-
-        //public class DesignTimeActivitiesDbContextFactory : IDesignTimeDbContextFactory<RepositoryContext>
-        //{
-        //    public RepositoryContext CreateDbContext(string[] args)
-        //    {
-        //        var builder = new ConfigurationBuilder()
-        //            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory()))
-        //            .AddJsonFile("appsettings.Development.json", optional: false);
-
-        //        var config = builder.Build();
-
-        //        var optionsBuilder = new DbContextOptionsBuilder<RepositoryContext>()
-        //            .UseSqlServer(config.GetConnectionString("DefaultConnection"));
-
-        //        return new RepositoryContext(optionsBuilder.Options);
-        //    }
-        //}
     }
 }

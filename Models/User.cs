@@ -8,9 +8,9 @@ namespace PhonesBook.Models
 {
     public class User
     {
-        public int userID { get; set; }
-        public string firstName { get; set; }
-        public string secondName { get; set; }
-        public bool isAdmin { get; set; }
+        public int UserId { get; set; }
+        public string FirstName { get; set; }
+        public string SecondName { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }
