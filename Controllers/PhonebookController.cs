@@ -43,7 +43,7 @@ namespace PhonesBook.Controllers
                 PhonebookItem item = mapper.Map<AddContactDTO, PhonebookItem>(model);
                 repo.Add(item);
                 repo.Save(item);
-                return RedirectToAction("GetAll");
+                return Ok(item);
 
             }
             return View(model);
@@ -73,7 +73,7 @@ namespace PhonesBook.Controllers
             }
                 repo.Update(item);
                 repo.Save(item);
-                return RedirectToAction("GetAll");
+                return Ok(item);
         }
 
         [HttpDelete("{key}")]
@@ -94,7 +94,7 @@ namespace PhonesBook.Controllers
 
                 PhonebookItem item = mapper.Map<DeleteContactDTO, PhonebookItem>(model);
                 repo.Delete(key);
-                return RedirectToAction("GetAll");
+                return Ok(item);
         }
     }
 }
