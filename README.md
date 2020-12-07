@@ -1,2 +1,2 @@
-# PhonesBook
-Server part for phones book
+# PhoneBook
+Server part for phonebook
