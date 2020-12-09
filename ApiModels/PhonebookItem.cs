@@ -7,7 +7,7 @@ namespace PhonesBook.ApiModels
 {
     public class PhonebookItem
     {
-        public string Key { get; set; }
+        public Guid ContactId { get; set; }
         public string Name { get; set; }
         public string Login { get; set; }
         public string PhoneNumber { get; set; }

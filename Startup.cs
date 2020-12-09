@@ -14,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using PhonesBook.ApiModels;
+using PhonesBook.Service;
 
 namespace PhonesBook
 {
@@ -32,9 +33,10 @@ namespace PhonesBook
             services.AddCors(options=> {
                 options.AddPolicy("CorsPolicy", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             });
-            services.AddSingleton<IRepository, PhonebookItem>();
+            //services.AddSingleton<IGenericRepository, PhonebookItem>();
             services.AddMvc();
             services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+            services.AddScoped<IGenericRepository<PhonebookItem>, ContactService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +15,12 @@ namespace PhonesBook.Controllers
     [ApiController]
     public class PhonebookController : Controller
     {
-        IRepository repo;
-        public PhonebookController(IRepository phonebookItem)
+        private IGenericRepository<PhonebookItem> _repository;
+        public PhonebookController(IGenericRepository<PhonebookItem> phonebookItem)
         {
-            PhonebookItem = phonebookItem;
-            repo = new PhonebookItem();
+            this._repository = phonebookItem;
         }
-        public IRepository PhonebookItem { get; set; }
+        public IGenericRepository<PhonebookItem> PhonebookItem { get; set; }
 
         public IEnumerable<PhonebookItem> GetAll()
         {
@@ -41,18 +41,18 @@ namespace PhonesBook.Controllers
                 var mapper = new Mapper(config);
 
                 PhonebookItem item = mapper.Map<AddContactDTO, PhonebookItem>(model);
-                repo.Add(item);
-                repo.Save(item);
+                _repository.Insert(item);
                 return Ok(item);
 
             }
             return View(model);
         }
 
-        [HttpPut("{key}")]
-        public ActionResult Edit(string key, [FromBody]EditContactDTO model)
+        [HttpPut("{id}")]
+        [Route("{id:guid}")]
+        public ActionResult Edit(string id, [FromBody]EditContactDTO model)
         {
-            if (key == null )
+            if (id == null )
             {
                 return NotFound();
             }
@@ -66,20 +66,20 @@ namespace PhonesBook.Controllers
                 var mapper = new Mapper(config);
 
                 PhonebookItem item = mapper.Map<EditContactDTO, PhonebookItem>(model);
-            var pbitem = PhonebookItem.Find(key);
-            if (pbitem == null)
-            {
-                return NotFound();
-            }
-                repo.Update(item);
-                repo.Save(item);
+                _repository.Update(item);
+            //if (pbitem == null)
+            //{
+            //    return NotFound();
+            //}
+                _repository.Insert(item);
                 return Ok(item);
         }
 
         [HttpDelete("{key}")]
-        public ActionResult Delete(string key, [FromBody]DeleteContactDTO model)
+        [Route("{id:guid}")]
+        public ActionResult Delete(Guid id, [FromBody]DeleteContactDTO model)
         {
-            if (key == null)
+            if (id == null)
             {
               return NotFound();
             }
@@ -93,7 +93,7 @@ namespace PhonesBook.Controllers
                 var mapper = new Mapper(config);
 
                 PhonebookItem item = mapper.Map<DeleteContactDTO, PhonebookItem>(model);
-                repo.Delete(key);
+                _repository.Delete(id);
                 return Ok(item);
         }
     }
