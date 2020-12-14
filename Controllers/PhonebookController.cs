@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -11,27 +12,28 @@ using AutoMapper;
 namespace PhonesBook.Controllers
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class PhonebookController : Controller
     {
-        IRepository repo;
-        public PhonebookController(IRepository phonebookItem)
+        private IGenericRepository<PhonebookItem> _repository;
+        public PhonebookController(IGenericRepository<PhonebookItem> phonebookItem)
         {
-            PhonebookItem = phonebookItem;
-            repo = new phonebookItem();
+            this.PhonebookItem = phonebookItem;
         }
-        public IRepository PhonebookItem { get; set; }
+        public IGenericRepository<PhonebookItem> PhonebookItem { get; set; }
 
+        [HttpGet]
         public IEnumerable<PhonebookItem> GetAll()
         {
             return PhonebookItem.GetAll();
         }
 
         [HttpPost]
-        public ActionResult Add([FromBody]AddContactViewModel model)
+        public ActionResult Add([FromBody]AddContactDTO model)
         {
             if (ModelState.IsValid){
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactViewModel, PhonebookItem>()
-                    .ForMember("Key", opt => opt.MapFrom(c => c.Id))
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactDTO, PhonebookItem>()
+                    .ForMember("ContactId", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                     .ForMember("Login", opt => opt.Ignore())
                     .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
@@ -39,23 +41,23 @@ namespace PhonesBook.Controllers
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
-                PhonebookItem item = mapper.Map<AddContactViewModel, PhonebookItem>(model);
-                repo.Add(item);
-                repo.Save(item);
-                return RedirectToAction("GetAll");
+                PhonebookItem item = mapper.Map<AddContactDTO, PhonebookItem>(model);
+                PhonebookItem.Insert(item);
+                return CreatedAtAction("GetAll", new { id = item.ContactId }, item); ;
 
             }
             return View(model);
         }
 
-        [HttpPut("{key}")]
-        public ActionResult Edit(string key, [FromBody]EditContactViewModel model)
+        [HttpPut("{id}")]
+        [Route("{id}")]
+        public ActionResult Edit(string id, [FromBody]EditContactDTO model)
         {
-            if (key == null )
+            if (id == null )
             {
                 return NotFound();
             }
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactViewModel, PhonebookItem>()
+                var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactDTO, PhonebookItem>()
                     .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                     .ForMember("Login", opt => opt.MapFrom(c => c.Email))
@@ -64,25 +66,25 @@ namespace PhonesBook.Controllers
                 config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
-                PhonebookItem item = mapper.Map<EditContactViewModel, PhonebookItem>(model);
-            var pbitem = PhonebookItem.Find(key);
-            if (pbitem == null)
-            {
-                return NotFound();
-            }
-                repo.Update(item);
-                repo.Save(item);
-                return RedirectToAction("GetAll");
+                PhonebookItem item = mapper.Map<EditContactDTO, PhonebookItem>(model);
+                _repository.Update(item);
+            //if (pbitem == null)
+            //{
+            //    return NotFound();
+            //}
+                _repository.Insert(item);
+                return Ok(item);
         }
 
         [HttpDelete("{key}")]
-        public ActionResult Delete(string key, [FromBody]DeleteContactViewModel model)
+        [Route("{id:guid}")]
+        public ActionResult Delete(Guid id, [FromBody]DeleteContactDTO model)
         {
-            if (key == null)
+            if (id == null)
             {
               return NotFound();
             }
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteContactViewModel, PhonebookItem>()
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteContactDTO, PhonebookItem>()
                 .ForMember("Key", opt => opt.MapFrom(c => c.Id))
                 .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                 .ForMember("Login", opt => opt.MapFrom(c => c.Email))
@@ -91,9 +93,9 @@ namespace PhonesBook.Controllers
             config.AssertConfigurationIsValid();// to check automapper
                 var mapper = new Mapper(config);
 
-                PhonebookItem item = mapper.Map<DeleteContactViewModel, PhonebookItem>(model);
-                repo.Delete(key);
-                return RedirectToAction("GetAll");
+                PhonebookItem item = mapper.Map<DeleteContactDTO, PhonebookItem>(model);
+                _repository.Delete(id);
+                return Ok(item);
         }
     }
 }

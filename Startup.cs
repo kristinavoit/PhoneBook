@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,8 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using PhonesBook.ApiModels;
-using PhonesBook.Services;
+using PhonesBook.Service;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace PhonesBook
 {
@@ -34,9 +38,17 @@ namespace PhonesBook
            
             string connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(connection));
-            services.AddControllersWithViews();
-            //services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             //services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddSwaggerGen(o =>
+            {
+                o.SwaggerDoc("v1",
+                  new OpenApiInfo
+                  {
+                      Title = "Swagger",
+                      Version = "v1"
+                  });
+            });
+            services.AddScoped<IGenericRepository<PhonebookItem>, ContactService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -60,6 +72,11 @@ namespace PhonesBook
             //{
             //    app.UseDeveloperExceptionPage();
             //}
+            app.UseSwagger();
+            app.UseSwaggerUI(o =>
+            {
+                o.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+            });
 
             app.UseHttpsRedirection();
 

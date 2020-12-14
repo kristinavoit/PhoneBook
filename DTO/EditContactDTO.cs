@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace PhonesBook.ApiModels
 {
-    public class PhonebookItem
+    public class EditContactDTO
     {
-        public Guid ContactId { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
-        public string Login { get; set; }
+        public string Email { get; set; }
         public string PhoneNumber { get; set; }
-        public bool IsAdded { get; set; }
+        public bool CheckNull { get; set; }
     }
 }
