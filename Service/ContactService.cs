@@ -8,6 +8,8 @@ namespace PhonesBook.Service
 {
     public class ContactService : IGenericRepository<PhonebookItem>
     {
+        private readonly AppDBContext _ctx;
+
         List<PhonebookItem> _phonebookItem = new List<PhonebookItem>();
         public IEnumerable<PhonebookItem> GetAll()
         {
@@ -40,7 +42,7 @@ namespace PhonesBook.Service
         }
         public void Insert(PhonebookItem item)
         {
-            _phonebookItem.Add(item);
+            item.ContactId = Guid.NewGuid();
         }
 
         public void Delete(Guid id)

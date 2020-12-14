@@ -18,10 +18,11 @@ namespace PhonesBook.Controllers
         private IGenericRepository<PhonebookItem> _repository;
         public PhonebookController(IGenericRepository<PhonebookItem> phonebookItem)
         {
-            this._repository = phonebookItem;
+            this.PhonebookItem = phonebookItem;
         }
         public IGenericRepository<PhonebookItem> PhonebookItem { get; set; }
 
+        [HttpGet]
         public IEnumerable<PhonebookItem> GetAll()
         {
             return PhonebookItem.GetAll();
@@ -32,7 +33,7 @@ namespace PhonesBook.Controllers
         {
             if (ModelState.IsValid){
                 var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactDTO, PhonebookItem>()
-                    .ForMember("Key", opt => opt.MapFrom(c => c.Id))
+                    .ForMember("ContactId", opt => opt.MapFrom(c => c.Id))
                     .ForMember("Name", opt => opt.MapFrom(c => c.Name))
                     .ForMember("Login", opt => opt.Ignore())
                     .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
@@ -41,15 +42,15 @@ namespace PhonesBook.Controllers
                 var mapper = new Mapper(config);
 
                 PhonebookItem item = mapper.Map<AddContactDTO, PhonebookItem>(model);
-                _repository.Insert(item);
-                return Ok(item);
+                PhonebookItem.Insert(item);
+                return CreatedAtAction("GetAll", new { id = item.ContactId }, item); ;
 
             }
             return View(model);
         }
 
         [HttpPut("{id}")]
-        [Route("{id:guid}")]
+        [Route("{id}")]
         public ActionResult Edit(string id, [FromBody]EditContactDTO model)
         {
             if (id == null )
