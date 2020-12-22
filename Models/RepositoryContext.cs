@@ -51,6 +51,9 @@ namespace PhonesBook.Models
             modelBuilder.Entity<Contact>()
                 .Property(u => u.CountryName)
                 .HasColumnName("countryName");
+            modelBuilder.Entity<Contact>()
+                .Property(u => u.UserId)
+                .HasColumnName("userId");
 
             base.OnModelCreating(modelBuilder);
         }
