@@ -20,18 +20,6 @@ namespace PhonesBook.Models
         {
         }
 
-        //public readonly IConfiguration Configuration;
-
-        //public RepositoryContext(IConfiguration configuration)
-        //{
-        //    Configuration = configuration;
-        //}
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseSqlServer("DefaultConnection");
-        //}
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()

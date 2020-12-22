@@ -1,4 +1,5 @@
 ﻿using PhonesBook.ApiModels;
+using PhonesBook.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,48 +7,39 @@ using System.Threading.Tasks;
 
 namespace PhonesBook.Service
 {
-    public class ContactService : IGenericRepository<PhonebookItem>
+    public class ContactService : IGenericRepository<Contact>
     {
-        private readonly AppDBContext _ctx;
+        private readonly RepositoryContext _ctx;
 
-        List<PhonebookItem> _phonebookItem = new List<PhonebookItem>();
-        public IEnumerable<PhonebookItem> GetAll()
+        public ContactService(RepositoryContext ctx)
         {
-            return _phonebookItem;
+            _ctx = ctx;
+        }
+        public IEnumerable<Contact> GetAll()
+        {
+            return _ctx.Set<Contact>().ToList();
         }
 
-        public PhonebookItem GetById(Guid id)
+        public Contact GetById(int id)
         {
-            return _phonebookItem.Where(x => x.ContactId == id).SingleOrDefault();
+            return _ctx.Set<Contact>().Find(id);
         }
 
-        public bool Update(PhonebookItem item)
+        public void Update(Contact item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException("item");
-            }
-            int index = _phonebookItem.FindIndex(p => p.ContactId == item.ContactId);
-            if (index == -1)
-            {
-                return false;
-            }
-            _phonebookItem.RemoveAt(index);
-            _phonebookItem.Add(item);
-            return true;
-            //_phonebookItem[item.ContactId] = item;
-            //item.ModifiedOn = DateTime.Now;
-            //_phonebookItem.Set<T>().Attach(item);
-            //_phonebookItem.Entry(item).State = EntityState.Modified;
+            _ctx.Set<Contact>().Update(item);
+            _ctx.SaveChanges();
         }
-        public void Insert(PhonebookItem item)
+        public void Insert(Contact item)
         {
-            item.ContactId = Guid.NewGuid();
+            _ctx.Set<Contact>().Add(item);
+            _ctx.SaveChanges();
         }
 
-        public void Delete(Guid id)
+        public void Delete(Contact item)
         {
-            _phonebookItem.RemoveAll(x => x.ContactId == id);
+            _ctx.Set<Contact>().Remove(item);
+            _ctx.SaveChanges();
         }
     }
 }

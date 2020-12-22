@@ -7,8 +7,8 @@ namespace PhonesBook.ApiModels
 {
     public class AddContactDTO
     {
-        public Guid? Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public string ContactName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public bool CheckNull { get; set; }

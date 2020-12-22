@@ -6,96 +6,79 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using PhonesBook.ApiModels;
 using AutoMapper;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using PhonesBook.Models;
+using PhonesBook.Service;
 
 namespace PhonesBook.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class PhonebookController : Controller
     {
-        private IGenericRepository<PhonebookItem> _repository;
-        public PhonebookController(IGenericRepository<PhonebookItem> phonebookItem)
+        private readonly IMapper _mapper;
+        
+        private IGenericRepository<Contact> сontactRepository;
+        public PhonebookController(IGenericRepository<Contact> сontactRepository, IMapper mapper)
         {
-            this.PhonebookItem = phonebookItem;
+            this.сontactRepository = сontactRepository;
+            _mapper = mapper;
         }
-        public IGenericRepository<PhonebookItem> PhonebookItem { get; set; }
 
         [HttpGet]
-        public IEnumerable<PhonebookItem> GetAll()
+        public IEnumerable<Contact> GetAll()
         {
-            return PhonebookItem.GetAll();
+            return сontactRepository.GetAll();
+        }
+
+        [HttpGet("{id}")]
+        public Contact GetById(int id)
+        {
+            return сontactRepository.GetById(id);
         }
 
         [HttpPost]
-        public ActionResult Add([FromBody]AddContactDTO model)
+        public ActionResult Add(AddContactDTO model)
         {
-            if (ModelState.IsValid){
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<AddContactDTO, PhonebookItem>()
-                    .ForMember("ContactId", opt => opt.MapFrom(c => c.Id))
-                    .ForMember("Name", opt => opt.MapFrom(c => c.Name))
-                    .ForMember("Login", opt => opt.Ignore())
-                    .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
-                    .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
-                config.AssertConfigurationIsValid();// to check automapper
-                var mapper = new Mapper(config);
-
-                PhonebookItem item = mapper.Map<AddContactDTO, PhonebookItem>(model);
-                PhonebookItem.Insert(item);
-                return CreatedAtAction("GetAll", new { id = item.ContactId }, item); ;
-
+            if (ModelState.IsValid)
+            {
+                Contact item = _mapper.Map<AddContactDTO, Contact>(model);
+                сontactRepository.Insert(item);
             }
-            return View(model);
+            return Ok(model);
         }
 
         [HttpPut("{id}")]
-        [Route("{id}")]
-        public ActionResult Edit(string id, [FromBody]EditContactDTO model)
+        public ActionResult Edit(int Id, EditContactDTO model)
         {
-            if (id == null )
+            if (Id == 0)
             {
                 return NotFound();
             }
-                var config = new MapperConfiguration(cfg => cfg.CreateMap<EditContactDTO, PhonebookItem>()
-                    .ForMember("Key", opt => opt.MapFrom(c => c.Id))
-                    .ForMember("Name", opt => opt.MapFrom(c => c.Name))
-                    .ForMember("Login", opt => opt.MapFrom(c => c.Email))
-                    .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
-                    .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
-                config.AssertConfigurationIsValid();// to check automapper
-                var mapper = new Mapper(config);
-
-                PhonebookItem item = mapper.Map<EditContactDTO, PhonebookItem>(model);
-                _repository.Update(item);
-            //if (pbitem == null)
-            //{
-            //    return NotFound();
-            //}
-                _repository.Insert(item);
-                return Ok(item);
+            if (Id !=  model.Id)
+            {
+                return BadRequest("Ids did not match");
+            }
+            var findContact = сontactRepository.GetById(Id);
+            if (findContact == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map<EditContactDTO, Contact>(model, findContact);
+            сontactRepository.Update(findContact);
+            return Ok(findContact);
         }
 
-        [HttpDelete("{key}")]
-        [Route("{id:guid}")]
-        public ActionResult Delete(Guid id, [FromBody]DeleteContactDTO model)
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id, DeleteContactDTO model)
         {
-            if (id == null)
+            if (id == 0)
             {
-              return NotFound();
+                return NotFound();
             }
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<DeleteContactDTO, PhonebookItem>()
-                .ForMember("Key", opt => opt.MapFrom(c => c.Id))
-                .ForMember("Name", opt => opt.MapFrom(c => c.Name))
-                .ForMember("Login", opt => opt.MapFrom(c => c.Email))
-                .ForMember("PhoneNumber", opt => opt.MapFrom(c => c.PhoneNumber))
-                .ForMember("IsAdded", opt => opt.MapFrom(c => c.CheckNull)));
-            config.AssertConfigurationIsValid();// to check automapper
-                var mapper = new Mapper(config);
-
-                PhonebookItem item = mapper.Map<DeleteContactDTO, PhonebookItem>(model);
-                _repository.Delete(id);
-                return Ok(item);
+            var findContact = сontactRepository.GetById(id);
+            _mapper.Map<DeleteContactDTO, Contact>(model);
+            сontactRepository.Delete(findContact);
+            return Ok();
         }
     }
 }

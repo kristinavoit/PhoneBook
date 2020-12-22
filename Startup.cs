@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PhonesBook.ApiModels;
+using PhonesBook.Mapping;
+using PhonesBook.Models;
 using PhonesBook.Service;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -37,7 +40,12 @@ namespace PhonesBook
         {
            
             string connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(connection));
+
+            //Mapper.Initialize(cfg => cfg.AddProfile<MappingProfile>());
+            services.AddAutoMapper(typeof(MappingProfile));
+
+            services.AddMvc();
+            services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(connection), ServiceLifetime.Scoped);
             //services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSwaggerGen(o =>
             {
@@ -48,7 +56,8 @@ namespace PhonesBook
                       Version = "v1"
                   });
             });
-            services.AddScoped<IGenericRepository<PhonebookItem>, ContactService>();
+            services.AddSwaggerGenNewtonsoftSupport();
+            services.AddScoped<IGenericRepository<Contact>, ContactService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -66,12 +75,12 @@ namespace PhonesBook
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
             app.UseSwagger();
             app.UseSwaggerUI(o =>
             {
@@ -84,7 +93,7 @@ namespace PhonesBook
 
             app.UseAuthentication();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
