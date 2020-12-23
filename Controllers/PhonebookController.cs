@@ -58,14 +58,14 @@ namespace PhonesBook.Controllers
             {
                 return BadRequest("Ids did not match");
             }
-            var findContact = сontactRepository.GetById(Id);
-            if (findContact == null)
+            var contactItem = сontactRepository.GetById(Id);
+            if (contactItem == null)
             {
                 return NotFound();
             }
-            _mapper.Map<EditContactDTO, Contact>(model, findContact);
-            сontactRepository.Update(findContact);
-            return Ok(findContact);
+            _mapper.Map<EditContactDTO, Contact>(model, contactItem);
+            сontactRepository.Update(contactItem);
+            return Ok(contactItem);
         }
 
         [HttpDelete("{id}")]
@@ -75,9 +75,9 @@ namespace PhonesBook.Controllers
             {
                 return NotFound();
             }
-            var findContact = сontactRepository.GetById(id);
+            var contactItem = сontactRepository.GetById(id);
             _mapper.Map<DeleteContactDTO, Contact>(model);
-            сontactRepository.Delete(findContact);
+            сontactRepository.Delete(contactItem);
             return Ok();
         }
     }

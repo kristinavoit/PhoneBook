@@ -41,12 +41,10 @@ namespace PhonesBook
            
             string connection = Configuration.GetConnectionString("DefaultConnection");
 
-            //Mapper.Initialize(cfg => cfg.AddProfile<MappingProfile>());
             services.AddAutoMapper(typeof(MappingProfile));
 
             services.AddMvc();
             services.AddDbContext<RepositoryContext>(options => options.UseSqlServer(connection), ServiceLifetime.Scoped);
-            //services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSwaggerGen(o =>
             {
                 o.SwaggerDoc("v1",
